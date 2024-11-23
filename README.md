@@ -1,10 +1,10 @@
 ---
 title: Fear Of A Black Hat
-emoji: 💬
-colorFrom: yellow
+emoji: 🏃
+colorFrom: gray
 colorTo: purple
 sdk: gradio
-sdk_version: 4.36.1
+sdk_version: 5.6.0
 app_file: app.py
 pinned: false
 license: mit
