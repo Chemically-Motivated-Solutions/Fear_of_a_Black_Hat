@@ -6,27 +6,39 @@ For more information on `huggingface_hub` Inference API support, please check th
 """
 client = InferenceClient("HuggingFaceH4/zephyr-7b-beta")
 
-
-def respond(
-    message,
+def simulate_attack(
+    prompt,
     history: list[tuple[str, str]],
     system_message,
     max_tokens,
     temperature,
     top_p,
 ):
-    messages = [{"role": "system", "content": system_message}]
+    """
+    Simulates a Blackhat AI scenario by generating attack strategies, potential impacts, and ethical countermeasures.
+    """
+    # Build the system message to define the simulator's behavior
+    messages = [
+        {
+            "role": "system",
+            "content": system_message,
+        }
+    ]
 
+    # Include user and assistant message history
     for val in history:
         if val[0]:
             messages.append({"role": "user", "content": val[0]})
         if val[1]:
             messages.append({"role": "assistant", "content": val[1]})
 
-    messages.append({"role": "user", "content": message})
+    # Add the current user prompt
+    messages.append({"role": "user", "content": prompt})
 
+    # Initialize the response variable
     response = ""
 
+    # Stream the AI's response from the inference API
     for message in client.chat_completion(
         messages,
         max_tokens=max_tokens,
@@ -39,25 +51,31 @@ def respond(
         response += token
         yield response
 
-"""
-For information on how to customize the ChatInterface, peruse the gradio docs: https://www.gradio.app/docs/chatinterface
-"""
+# Define the Gradio ChatInterface with security-focused configuration
 demo = gr.ChatInterface(
-    respond,
+    simulate_attack,
     additional_inputs=[
-        gr.Textbox(value="You are a friendly Chatbot.", label="System message"),
-        gr.Slider(minimum=1, maximum=2048, value=512, step=1, label="Max new tokens"),
-        gr.Slider(minimum=0.1, maximum=4.0, value=0.7, step=0.1, label="Temperature"),
+        gr.Textbox(
+            value=(
+                "You are an AI simulator for cybersecurity training, designed to generate attack scenarios, analyze their impacts, and suggest countermeasures."
+            ),
+            label="System message",
+        ),
+        gr.Slider(minimum=1, maximum=2048, value=1024, step=1, label="Max new tokens"),
+        gr.Slider(minimum=0.1, maximum=4.0, value=1.0, step=0.1, label="Temperature"),
         gr.Slider(
             minimum=0.1,
             maximum=1.0,
-            value=0.95,
+            value=0.9,
             step=0.05,
             label="Top-p (nucleus sampling)",
         ),
     ],
+    title="Blackhat AI Simulator",
+    description=(
+        "This simulator generates adversarial scenarios, analyzes attack vectors, and provides ethical countermeasures. Use responsibly for cybersecurity training and awareness."
+    ),
 )
-
 
 if __name__ == "__main__":
     demo.launch()
