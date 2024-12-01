@@ -4,7 +4,7 @@ emoji: 🏃
 colorFrom: gray
 colorTo: purple
 sdk: gradio
-sdk_version: 5.6.0
+sdk_version: 5.7.1
 app_file: app.py
 pinned: false
 license: mit
